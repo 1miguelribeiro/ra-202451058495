@@ -1,0 +1,347 @@
+{
+  "info": {
+    "_postman_id": "59f8dac5-b8f0-4eac-bf1d-9e28ce41201c",
+    "name": "Aula 04 REST",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38620541"
+  },
+  "item": [
+    {
+      "name": "GET Pets",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5302/api/v1/pets",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "pets"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE Pet Inexistente",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5302/api/v1/pet/999999",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "pet",
+            "999999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Pet",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5302/api/v1/pet/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "pet",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Vip",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5302/api/v1/tutores-vip",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "tutores-vip"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST Pets",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Biscoito\",\n  \"especie\": \"cachorro\",\n  \"raca\": \"Pit Bull\",\n  \"tutorId\": 1,\n  \"pesoEmKg\": 25,\n  \"nascimento\": \"2026-01-01\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5302/api/v1/pets",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "pets"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Pet Inexistente",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5302/api/v1/pets/999999",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "pets",
+            "999999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET api/pets",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5302/api/pets",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "pets"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Exames",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5302/api/v1/petshops/1/clientes/1/pets/1/consultas/1/exames/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "petshops",
+            "1",
+            "clientes",
+            "1",
+            "pets",
+            "1",
+            "consultas",
+            "1",
+            "exames",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Consultas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5302/api/v1/consultas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "consultas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT Vacinas",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Vacina da raiva\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5302/api/v1/pets/1/vacinas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "pets",
+            "1",
+            "vacinas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST SEssao",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"usuario\": \"Ana\",\n  \"senha\": \"123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5302/api/v1/sessao",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "sessao"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Meus Pets",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5302/api/v1/meus-pets",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "meus-pets"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Tabela Precos",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5302/api/v1/tabela-de-precos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5302",
+          "path": [
+            "api",
+            "v1",
+            "tabela-de-precos"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
