@@ -1,0 +1,396 @@
+{
+  "info": {
+    "_postman_id": "ec24a4de-5e2b-4b7c-8cff-f8439daa3738",
+    "name": "Aula 02 REST",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38620541"
+  },
+  "item": [
+    {
+      "name": "Get lista",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5268/api/livros/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Id inexistente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5268/api/livros/999",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros",
+            "999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Post",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Livro Teste\",\n  \"autor\": \"Autor\",\n  \"ano\": 2026,\n  \"disponivel\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Post sem titulo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"autor\": \"Autor2\",\n  \"ano\": 2026\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Livro v2\",\n  \"autor\": \"Autor\",\n  \"ano\": 2026,\n  \"disponivel\": false\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros/4",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put Inexistente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Fantasma\",\n  \"autor\": \"Ninguem\",\n  \"ano\": 2000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros/999",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros",
+            "999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5268/api/livros/4",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete 2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5268/api/livros/4",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5268",
+          "path": [
+            "api",
+            "livros",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
