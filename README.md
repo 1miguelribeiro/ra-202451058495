@@ -11,7 +11,5 @@ Repositório de exercícios práticos da disciplina de Arquitetura de Aplicaçõ
 |---|---|
 | `aaw/` | Arquitetura de Aplicações Web |
 
-Em cada disciplina:
-
 - `aulas/` — exercícios práticos realizados em aula
 - `trabalhos/` — trabalhos e entregas avaliativas
