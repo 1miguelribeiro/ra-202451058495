@@ -1,0 +1,6 @@
+@LojaRetro.Api_HostAddress = http://localhost:5073
+
+GET {{LojaRetro.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
