@@ -1,0 +1,17 @@
+# Sobe o banco MongoDB da Loja Retro.
+#docker compose up -d
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: loja-retro-mongo
+    restart: unless-stopped              
+    ports:
+      - "27017:27017"                    
+    environment:                         
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo-dados:/data/db             # guarda os dados mesmo se o container for apagado
+
+volumes:
+  mongo-dados:

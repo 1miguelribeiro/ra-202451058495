@@ -1,0 +1,11 @@
+# Arquivos gerados na compilacao do .NET
+bin/
+obj/
+
+# Configuracoes do editor
+.vs/
+.vscode/
+*.user
+
+# Senhas e variaveis locais
+.env
