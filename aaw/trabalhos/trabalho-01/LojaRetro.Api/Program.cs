@@ -1,3 +1,4 @@
+using LojaRetro.Api.Repositories;
 using MongoDB.Driver;
 
 DotNetEnv.Env.TraversePath().Load();
@@ -10,6 +11,7 @@ var nomeDoBanco = builder.Configuration["MongoDb:Database"] ?? "loja_retro";
 
 builder.Services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(nomeDoBanco));
+builder.Services.AddScoped<JogoRepository>();
 
 // Add services to the container.
 
