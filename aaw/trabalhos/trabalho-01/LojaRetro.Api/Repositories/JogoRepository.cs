@@ -26,4 +26,15 @@ public class JogoRepository
     {
         await _colecao.InsertOneAsync(jogo);
     }
+
+    public async Task AtualizarAsync(Jogo jogo)
+    {
+        await _colecao.ReplaceOneAsync(j => j.Id == jogo.Id, jogo);
+    }
+
+    public async Task<bool> RemoverAsync(string id)
+    {
+        var resultado = await _colecao.DeleteOneAsync(j => j.Id == id);
+        return resultado.DeletedCount > 0;
+    }
 }
