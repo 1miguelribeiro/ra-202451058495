@@ -1,4 +1,6 @@
+using System.Reflection;
 using LojaRetro.Api.Repositories;
+using Microsoft.OpenApi;
 using MongoDB.Driver;
 
 DotNetEnv.Env.TraversePath().Load();
@@ -13,19 +15,34 @@ builder.Services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(nomeDoBanco));
 builder.Services.AddScoped<JogoRepository>();
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "API Loja Retrô",
+        Description = "API para controle do estoque da loja de jogos retrô.",
+        Contact = new OpenApiContact
+        {
+            Name = "Miguel Ribeiro"
+        }
+    });
+
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+    options.IncludeXmlComments(xmlPath);
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.MapOpenApi();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API Loja Retrô v1");
+    options.DocumentTitle = "Documentação - API Loja Retrô";
+});
 
 app.UseHttpsRedirection();
 
