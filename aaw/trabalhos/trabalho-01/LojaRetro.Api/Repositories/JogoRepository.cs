@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 namespace LojaRetro.Api.Repositories;
 
-public class JogoRepository
+public class JogoRepository : IJogoRepository
 {
     private readonly IMongoCollection<Jogo> _colecao;
 

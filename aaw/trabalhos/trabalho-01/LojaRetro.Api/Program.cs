@@ -1,5 +1,7 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using LojaRetro.Api.Repositories;
+using LojaRetro.Api.Services;
 using Microsoft.OpenApi;
 using MongoDB.Driver;
 
@@ -13,9 +15,12 @@ var nomeDoBanco = builder.Configuration["MongoDb:Database"] ?? "loja_retro";
 
 builder.Services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(nomeDoBanco));
-builder.Services.AddScoped<JogoRepository>();
+builder.Services.AddScoped<IJogoRepository, JogoRepository>();
+builder.Services.AddScoped<IMovimentacaoRepository, MovimentacaoRepository>();
+builder.Services.AddScoped<EstoqueService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

@@ -14,9 +14,9 @@ namespace LojaRetro.Api.Controllers;
 [Tags("Jogos")]
 public class JogosController : ControllerBase
 {
-    private readonly JogoRepository _repositorio;
+    private readonly IJogoRepository _repositorio;
 
-    public JogosController(JogoRepository repositorio)
+    public JogosController(IJogoRepository repositorio)
     {
         _repositorio = repositorio;
     }
