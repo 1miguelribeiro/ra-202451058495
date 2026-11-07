@@ -5,6 +5,6 @@ namespace LojaRetro.Api.Models;
 /// </summary>
 public enum TipoMovimentacao
 {
-    Entrada,
-    Saida
+    Entrada = 1,
+    Saida = 2
 }

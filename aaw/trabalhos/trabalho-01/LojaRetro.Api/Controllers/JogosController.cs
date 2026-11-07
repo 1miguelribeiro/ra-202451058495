@@ -15,10 +15,12 @@ namespace LojaRetro.Api.Controllers;
 public class JogosController : ControllerBase
 {
     private readonly IJogoRepository _repositorio;
+    private readonly IMovimentacaoRepository _movimentacoes;
 
-    public JogosController(IJogoRepository repositorio)
+    public JogosController(IJogoRepository repositorio, IMovimentacaoRepository movimentacoes)
     {
         _repositorio = repositorio;
+        _movimentacoes = movimentacoes;
     }
 
     /// <summary>
@@ -122,14 +124,20 @@ public class JogosController : ControllerBase
     /// <response code="204">Jogo apagado.</response>
     /// <response code="400">Id em formato inválido.</response>
     /// <response code="404">Jogo não encontrado.</response>
+    /// <response code="409">O jogo tem movimentações e não pode ser apagado.</response>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Remover(string id)
     {
         if (!IdValido(id))
             return BadRequest(new { mensagem = "Id inválido." });
+
+        var movimentacoes = await _movimentacoes.ListarPorJogoAsync(id);
+        if (movimentacoes.Count > 0)
+            return Conflict(new { mensagem = "Não é possível apagar: o jogo tem movimentações registradas." });
 
         var removido = await _repositorio.RemoverAsync(id);
         if (!removido)

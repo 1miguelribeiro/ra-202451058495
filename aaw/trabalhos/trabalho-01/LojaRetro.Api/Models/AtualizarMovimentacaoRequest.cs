@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LojaRetro.Api.Models;
 
 /// <summary>
@@ -9,6 +11,7 @@ public class AtualizarMovimentacaoRequest
     /// Entrada ou Saida.
     /// </summary>
     /// <example>Entrada</example>
+    [EnumDataType(typeof(TipoMovimentacao), ErrorMessage = "O tipo deve ser Entrada ou Saida.")]
     public TipoMovimentacao Tipo { get; set; }
 
     /// <summary>
@@ -21,5 +24,6 @@ public class AtualizarMovimentacaoRequest
     /// Motivo da movimentação.
     /// </summary>
     /// <example>Correção de lançamento</example>
+    [Required(ErrorMessage = "O motivo é obrigatório.")]
     public string Motivo { get; set; } = string.Empty;
 }
