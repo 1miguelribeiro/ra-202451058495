@@ -47,4 +47,62 @@ public class EstoqueService
         await _movimentacoes.CriarAsync(movimentacao);
         return movimentacao;
     }
+
+    public async Task<Movimentacao> AtualizarAsync(string id, AtualizarMovimentacaoRequest request)
+    {
+        if (!ObjectId.TryParse(id, out _))
+            throw new ArgumentException("Id inválido.");
+
+        if (request.Quantidade <= 0)
+            throw new ArgumentException("A quantidade deve ser maior que zero.");
+
+        var movimentacao = await _movimentacoes.BuscarPorIdAsync(id)
+            ?? throw new KeyNotFoundException("Movimentação não encontrada.");
+
+        var jogo = await _jogos.BuscarPorIdAsync(movimentacao.JogoId)
+            ?? throw new KeyNotFoundException("Jogo não encontrado.");
+
+        var novoEstoque = jogo.QuantidadeEmEstoque
+            - Efeito(movimentacao.Tipo, movimentacao.Quantidade)
+            + Efeito(request.Tipo, request.Quantidade);
+
+        if (novoEstoque < 0)
+            throw new InvalidOperationException("Estoque insuficiente.");
+
+        jogo.QuantidadeEmEstoque = novoEstoque;
+        movimentacao.Tipo = request.Tipo;
+        movimentacao.Quantidade = request.Quantidade;
+        movimentacao.Motivo = request.Motivo;
+
+        await _jogos.AtualizarAsync(jogo);
+        await _movimentacoes.AtualizarAsync(movimentacao);
+        return movimentacao;
+    }
+
+    public async Task RemoverAsync(string id)
+    {
+        if (!ObjectId.TryParse(id, out _))
+            throw new ArgumentException("Id inválido.");
+
+        var movimentacao = await _movimentacoes.BuscarPorIdAsync(id)
+            ?? throw new KeyNotFoundException("Movimentação não encontrada.");
+
+        var jogo = await _jogos.BuscarPorIdAsync(movimentacao.JogoId)
+            ?? throw new KeyNotFoundException("Jogo não encontrado.");
+
+        var novoEstoque = jogo.QuantidadeEmEstoque - Efeito(movimentacao.Tipo, movimentacao.Quantidade);
+
+        if (novoEstoque < 0)
+            throw new InvalidOperationException("Não é possível remover: o estoque ficaria negativo.");
+
+        jogo.QuantidadeEmEstoque = novoEstoque;
+
+        await _jogos.AtualizarAsync(jogo);
+        await _movimentacoes.RemoverAsync(id);
+    }
+
+    private static int Efeito(TipoMovimentacao tipo, int quantidade)
+    {
+        return tipo == TipoMovimentacao.Entrada ? quantidade : -quantidade;
+    }
 }

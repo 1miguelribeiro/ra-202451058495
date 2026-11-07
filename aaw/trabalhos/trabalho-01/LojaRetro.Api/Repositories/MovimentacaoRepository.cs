@@ -26,4 +26,15 @@ public class MovimentacaoRepository : IMovimentacaoRepository
     {
         await _colecao.InsertOneAsync(movimentacao);
     }
+
+    public async Task AtualizarAsync(Movimentacao movimentacao)
+    {
+        await _colecao.ReplaceOneAsync(m => m.Id == movimentacao.Id, movimentacao);
+    }
+
+    public async Task<bool> RemoverAsync(string id)
+    {
+        var resultado = await _colecao.DeleteOneAsync(m => m.Id == id);
+        return resultado.DeletedCount > 0;
+    }
 }

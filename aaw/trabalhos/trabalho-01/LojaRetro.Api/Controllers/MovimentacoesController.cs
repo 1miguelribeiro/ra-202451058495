@@ -96,4 +96,74 @@ public class MovimentacoesController : ControllerBase
             return BadRequest(new { mensagem = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Corrige uma movimentação e recalcula o estoque do jogo.
+    /// </summary>
+    /// <remarks>
+    /// O efeito antigo é desfeito e o novo é aplicado. O estoque não pode ficar negativo.
+    /// </remarks>
+    /// <param name="id">Id da movimentação.</param>
+    /// <param name="request">Novos dados da movimentação.</param>
+    /// <returns>Movimentação corrigida.</returns>
+    /// <response code="200">Movimentação corrigida.</response>
+    /// <response code="400">Id inválido, quantidade inválida ou estoque insuficiente.</response>
+    /// <response code="404">Movimentação ou jogo não encontrado.</response>
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(Movimentacao), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Movimentacao>> Atualizar(string id, AtualizarMovimentacaoRequest request)
+    {
+        try
+        {
+            var movimentacao = await _estoque.AtualizarAsync(id, request);
+            return Ok(movimentacao);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { mensagem = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { mensagem = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensagem = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Remove uma movimentação e desfaz o efeito dela no estoque.
+    /// </summary>
+    /// <param name="id">Id da movimentação.</param>
+    /// <returns>Nenhum conteúdo.</returns>
+    /// <response code="204">Movimentação removida.</response>
+    /// <response code="400">Id inválido ou o estoque ficaria negativo.</response>
+    /// <response code="404">Movimentação ou jogo não encontrado.</response>
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Remover(string id)
+    {
+        try
+        {
+            await _estoque.RemoverAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { mensagem = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { mensagem = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensagem = ex.Message });
+        }
+    }
 }
