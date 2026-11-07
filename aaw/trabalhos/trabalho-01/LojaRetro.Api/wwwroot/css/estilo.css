@@ -1,0 +1,190 @@
+:root {
+    --fundo: #ffffff;
+    --menu: #eef2f6;
+    --borda: #d5dde5;
+    --texto: #2b3440;
+    --texto-claro: #6b7785;
+    --principal: #2f6f9f;
+    --verde: #2e7d32;
+    --vermelho: #c0392b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.menu {
+    width: 210px;
+    background: var(--menu);
+    border-right: 1px solid var(--borda);
+}
+
+.menu-titulo {
+    padding: 20px 16px;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    color: var(--principal);
+    border-bottom: 1px solid var(--borda);
+}
+
+.menu button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 14px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--borda);
+    color: var(--texto);
+}
+
+.menu button:hover {
+    background: var(--borda);
+    color: var(--texto);
+}
+
+main {
+    flex: 1;
+    padding: 24px;
+    max-width: 960px;
+}
+
+h2 {
+    text-align: center;
+    font-weight: normal;
+    font-size: 22px;
+    margin: 0 0 20px;
+}
+
+h3 {
+    font-size: 16px;
+    margin: 24px 0 8px;
+}
+
+.painel {
+    border: 1px solid var(--borda);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--borda);
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid var(--borda);
+}
+
+th {
+    background: var(--menu);
+    font-weight: normal;
+    color: var(--texto-claro);
+}
+
+button {
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--principal);
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin: 2px;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+button.secundario {
+    background: var(--menu);
+    color: var(--texto);
+    border: 1px solid var(--borda);
+}
+
+button.perigo {
+    background: var(--vermelho);
+}
+
+form label {
+    display: block;
+    margin: 12px 0 4px;
+}
+
+form input, form select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--borda);
+    font-family: inherit;
+}
+
+.acoes {
+    margin-top: 16px;
+}
+
+.mensagem {
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border: 1px solid;
+}
+
+.mensagem.erro {
+    border-color: var(--vermelho);
+    color: var(--vermelho);
+    background: #fdecea;
+}
+
+.mensagem.sucesso {
+    border-color: var(--verde);
+    color: var(--verde);
+    background: #e8f5e9;
+}
+
+.escondido {
+    display: none;
+}
+
+.entrada {
+    color: var(--verde);
+}
+
+.saida {
+    color: var(--vermelho);
+}
+
+@media (max-width: 700px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .menu {
+        width: 100%;
+    }
+
+    main {
+        padding: 16px;
+    }
+
+    th:nth-child(3), td:nth-child(3) {
+        display: none;
+    }
+}
