@@ -17,6 +17,11 @@ public class MovimentacaoRepository : IMovimentacaoRepository
         return await _colecao.Find(_ => true).SortByDescending(m => m.Data).ToListAsync();
     }
 
+    public async Task<List<Movimentacao>> ListarPorJogoAsync(string jogoId)
+    {
+        return await _colecao.Find(m => m.JogoId == jogoId).SortByDescending(m => m.Data).ToListAsync();
+    }
+
     public async Task<Movimentacao?> BuscarPorIdAsync(string id)
     {
         return await _colecao.Find(m => m.Id == id).FirstOrDefaultAsync();

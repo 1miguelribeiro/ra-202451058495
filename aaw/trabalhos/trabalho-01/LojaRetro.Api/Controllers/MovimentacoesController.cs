@@ -25,16 +25,24 @@ public class MovimentacoesController : ControllerBase
     }
 
     /// <summary>
-    /// Lista todas as movimentações, da mais recente para a mais antiga.
+    /// Lista as movimentações, da mais recente para a mais antiga.
     /// </summary>
+    /// <param name="jogoId">Opcional: mostra só as movimentações deste jogo.</param>
     /// <returns>Lista de movimentações.</returns>
     /// <response code="200">Lista de movimentações (pode vir vazia).</response>
+    /// <response code="400">Id do jogo em formato inválido.</response>
     [HttpGet]
     [ProducesResponseType(typeof(List<Movimentacao>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<Movimentacao>>> Listar()
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<List<Movimentacao>>> Listar([FromQuery] string? jogoId)
     {
-        var movimentacoes = await _repositorio.ListarAsync();
-        return Ok(movimentacoes);
+        if (jogoId is null)
+            return Ok(await _repositorio.ListarAsync());
+
+        if (!ObjectId.TryParse(jogoId, out _))
+            return BadRequest(new { mensagem = "Id do jogo inválido." });
+
+        return Ok(await _repositorio.ListarPorJogoAsync(jogoId));
     }
 
     /// <summary>
