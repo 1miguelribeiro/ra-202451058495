@@ -1,5 +1,38 @@
 const conteudo = document.getElementById("conteudo");
 const caixaMensagem = document.getElementById("mensagem");
+const areaUsuario = document.getElementById("usuario");
+const botaoCadastrar = document.getElementById("botao-cadastrar");
+
+function lerSessao() {
+    const sessao = JSON.parse(localStorage.getItem("sessao"));
+    if (sessao && new Date(sessao.expiraEm) > new Date()) {
+        return sessao;
+    }
+    localStorage.removeItem("sessao");
+    return null;
+}
+
+function estaLogado() {
+    return lerSessao() !== null;
+}
+
+function ehAdmin() {
+    const sessao = lerSessao();
+    return sessao !== null && sessao.perfil === "admin";
+}
+
+function atualizarMenu() {
+    const sessao = lerSessao();
+    botaoCadastrar.classList.toggle("escondido", !ehAdmin());
+
+    if (sessao) {
+        areaUsuario.innerHTML = `
+            <p>${escapar(sessao.nome)}<br><small>${sessao.perfil}</small></p>
+            <button class="secundario" onclick="sair()">Sair</button>`;
+    } else {
+        areaUsuario.innerHTML = `<button onclick="mostrarLogin()">Entrar</button>`;
+    }
+}
 
 async function chamarApi(caminho, metodo = "GET", corpo = null) {
     const opcoes = { method: metodo, headers: { "Content-Type": "application/json" } };
@@ -7,7 +40,21 @@ async function chamarApi(caminho, metodo = "GET", corpo = null) {
         opcoes.body = JSON.stringify(corpo);
     }
 
+    const sessao = lerSessao();
+    if (sessao) {
+        opcoes.headers["Authorization"] = "Bearer " + sessao.token;
+    }
+
     const resposta = await fetch("/api" + caminho, opcoes);
+
+    if (resposta.status === 401 && caminho !== "/auth/login") {
+        localStorage.removeItem("sessao");
+        atualizarMenu();
+        throw new Error("Faça login para continuar.");
+    }
+    if (resposta.status === 403) {
+        throw new Error("Seu perfil não tem permissão para esta ação.");
+    }
     if (resposta.status === 204) {
         return null;
     }
@@ -49,6 +96,95 @@ function formatarPreco(valor) {
     return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+function mostrarLogin() {
+    limparMensagem();
+
+    conteudo.innerHTML = `
+        <h2>Entrar</h2>
+        <form class="painel" novalidate onsubmit="entrar(event)">
+            <label for="email">E-mail *</label>
+            <input id="email" type="email" required>
+            <label for="senha">Senha *</label>
+            <input id="senha" type="password" required>
+            <div class="acoes">
+                <button type="submit">Entrar</button>
+                <button type="button" class="secundario" onclick="mostrarRegistro()">Criar conta</button>
+            </div>
+        </form>`;
+}
+
+async function entrar(evento) {
+    evento.preventDefault();
+
+    if (!evento.target.checkValidity()) {
+        mostrarMensagem("Preencha os campos obrigatórios.", "erro");
+        return;
+    }
+
+    const dados = {
+        email: document.getElementById("email").value,
+        senha: document.getElementById("senha").value
+    };
+
+    try {
+        const sessao = await chamarApi("/auth/login", "POST", dados);
+        localStorage.setItem("sessao", JSON.stringify(sessao));
+        atualizarMenu();
+        await mostrarLista();
+        mostrarMensagem("Bem-vindo, " + sessao.nome + ".", "sucesso");
+    } catch (erro) {
+        mostrarMensagem(erro.message, "erro");
+    }
+}
+
+function mostrarRegistro() {
+    limparMensagem();
+
+    conteudo.innerHTML = `
+        <h2>Criar conta</h2>
+        <form class="painel" novalidate onsubmit="registrar(event)">
+            <label for="nome">Nome *</label>
+            <input id="nome" type="text" required>
+            <label for="email">E-mail *</label>
+            <input id="email" type="email" required>
+            <label for="senha">Senha (mínimo 6 caracteres) *</label>
+            <input id="senha" type="password" minlength="6" required>
+            <div class="acoes">
+                <button type="submit">Criar conta</button>
+                <button type="button" class="secundario" onclick="mostrarLogin()">Voltar</button>
+            </div>
+        </form>`;
+}
+
+async function registrar(evento) {
+    evento.preventDefault();
+
+    if (!evento.target.checkValidity()) {
+        mostrarMensagem("Preencha os campos obrigatórios.", "erro");
+        return;
+    }
+
+    const dados = {
+        nome: document.getElementById("nome").value,
+        email: document.getElementById("email").value,
+        senha: document.getElementById("senha").value
+    };
+
+    try {
+        await chamarApi("/auth/registro", "POST", dados);
+        mostrarLogin();
+        mostrarMensagem("Conta criada. Agora é só entrar.", "sucesso");
+    } catch (erro) {
+        mostrarMensagem(erro.message, "erro");
+    }
+}
+
+async function sair() {
+    localStorage.removeItem("sessao");
+    atualizarMenu();
+    await mostrarLista();
+}
+
 async function mostrarLista() {
     limparMensagem();
 
@@ -84,6 +220,7 @@ async function mostrarDetalhe(id) {
     try {
         const jogo = await chamarApi("/jogos/" + id);
         const movimentacoes = await chamarApi("/movimentacoes?jogoId=" + id);
+        const admin = ehAdmin();
 
         const linhas = movimentacoes.map(mov => `
             <tr>
@@ -91,24 +228,14 @@ async function mostrarDetalhe(id) {
                 <td class="${mov.tipo === "Entrada" ? "entrada" : "saida"}">${mov.tipo}</td>
                 <td>${mov.quantidade}</td>
                 <td>${escapar(mov.motivo)}</td>
-                <td><button class="perigo" onclick="removerMovimentacao('${mov.id}', '${jogo.id}')">Remover</button></td>
+                <td>${admin ? `<button class="perigo" onclick="removerMovimentacao('${mov.id}', '${jogo.id}')">Remover</button>` : ""}</td>
             </tr>`).join("");
 
-        conteudo.innerHTML = `
-            <h2>${escapar(jogo.nome)}</h2>
-            <div class="painel">
-                <p><strong>Console:</strong> ${escapar(jogo.console)}</p>
-                <p><strong>Ano:</strong> ${jogo.anoLancamento}</p>
-                <p><strong>Preço:</strong> ${formatarPreco(jogo.preco)}</p>
-                <p><strong>Estoque:</strong> ${jogo.quantidadeEmEstoque}</p>
-                <div class="acoes">
-                    <button class="secundario" onclick="mostrarLista()">Voltar</button>
+        const botoesAdmin = admin ? `
                     <button onclick="mostrarFormulario('${jogo.id}')">Editar</button>
-                    <button class="perigo" onclick="removerJogo('${jogo.id}')">Apagar</button>
-                </div>
-            </div>
+                    <button class="perigo" onclick="removerJogo('${jogo.id}')">Apagar</button>` : "";
 
-            <h3>Registrar entrada ou saída</h3>
+        const formulario = estaLogado() ? `
             <form class="painel" novalidate onsubmit="registrarMovimentacao(event, '${jogo.id}')">
                 <label for="tipo">Tipo *</label>
                 <select id="tipo" required>
@@ -120,7 +247,22 @@ async function mostrarDetalhe(id) {
                 <label for="motivo">Motivo *</label>
                 <input id="motivo" type="text" placeholder="Ex.: venda no balcão" required>
                 <div class="acoes"><button type="submit">Registrar</button></div>
-            </form>
+            </form>` : `<p class="painel">Entre no sistema para registrar entradas e saídas.</p>`;
+
+        conteudo.innerHTML = `
+            <h2>${escapar(jogo.nome)}</h2>
+            <div class="painel">
+                <p><strong>Console:</strong> ${escapar(jogo.console)}</p>
+                <p><strong>Ano:</strong> ${jogo.anoLancamento}</p>
+                <p><strong>Preço:</strong> ${formatarPreco(jogo.preco)}</p>
+                <p><strong>Estoque:</strong> ${jogo.quantidadeEmEstoque}</p>
+                <div class="acoes">
+                    <button class="secundario" onclick="mostrarLista()">Voltar</button>${botoesAdmin}
+                </div>
+            </div>
+
+            <h3>Registrar entrada ou saída</h3>
+            ${formulario}
 
             <h3>Histórico</h3>
             <table>
@@ -244,4 +386,5 @@ async function removerMovimentacao(id, jogoId) {
     }
 }
 
+atualizarMenu();
 mostrarLista();

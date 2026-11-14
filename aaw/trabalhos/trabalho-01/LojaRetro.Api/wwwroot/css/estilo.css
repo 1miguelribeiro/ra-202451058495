@@ -53,9 +53,39 @@ body {
     color: var(--texto);
 }
 
+.menu .escondido {
+    display: none;
+}
+
 .menu button:hover {
     background: var(--borda);
     color: var(--texto);
+}
+
+.menu-usuario {
+    padding: 16px;
+}
+
+.menu-usuario p {
+    margin: 0 0 8px;
+}
+
+.menu-usuario small {
+    color: var(--texto-claro);
+}
+
+.menu .menu-usuario button {
+    width: auto;
+    padding: 6px 12px;
+    border: none;
+    background: var(--principal);
+    color: #ffffff;
+}
+
+.menu .menu-usuario button.secundario {
+    background: var(--menu);
+    color: var(--texto);
+    border: 1px solid var(--borda);
 }
 
 main {
