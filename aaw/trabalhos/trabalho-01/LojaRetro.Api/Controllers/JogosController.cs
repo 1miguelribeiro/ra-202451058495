@@ -1,5 +1,6 @@
 using LojaRetro.Api.Models;
 using LojaRetro.Api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
@@ -29,6 +30,7 @@ public class JogosController : ControllerBase
     /// <returns>Lista de jogos.</returns>
     /// <response code="200">Lista de jogos (pode vir vazia).</response>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<Jogo>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<Jogo>>> Listar()
     {
@@ -45,6 +47,7 @@ public class JogosController : ControllerBase
     /// <response code="400">Id em formato inválido.</response>
     /// <response code="404">Jogo não encontrado.</response>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(Jogo), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -67,9 +70,14 @@ public class JogosController : ControllerBase
     /// <returns>Jogo recém-criado.</returns>
     /// <response code="201">Jogo criado.</response>
     /// <response code="400">Dados inválidos.</response>
+    /// <response code="401">Sem token ou token inválido.</response>
+    /// <response code="403">Perfil sem permissão (somente admin).</response>
     [HttpPost]
+    [Authorize(Roles = Perfis.Admin)]
     [ProducesResponseType(typeof(Jogo), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<Jogo>> Criar(JogoRequest request)
     {
         var jogo = new Jogo
@@ -94,10 +102,15 @@ public class JogosController : ControllerBase
     /// <response code="200">Jogo alterado.</response>
     /// <response code="400">Id ou dados inválidos.</response>
     /// <response code="404">Jogo não encontrado.</response>
+    /// <response code="401">Sem token ou token inválido.</response>
+    /// <response code="403">Perfil sem permissão (somente admin).</response>
     [HttpPut("{id}")]
+    [Authorize(Roles = Perfis.Admin)]
     [ProducesResponseType(typeof(Jogo), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<Jogo>> Atualizar(string id, JogoRequest request)
     {
         if (!IdValido(id))
@@ -125,11 +138,16 @@ public class JogosController : ControllerBase
     /// <response code="400">Id em formato inválido.</response>
     /// <response code="404">Jogo não encontrado.</response>
     /// <response code="409">O jogo tem movimentações e não pode ser apagado.</response>
+    /// <response code="401">Sem token ou token inválido.</response>
+    /// <response code="403">Perfil sem permissão (somente admin).</response>
     [HttpDelete("{id}")]
+    [Authorize(Roles = Perfis.Admin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Remover(string id)
     {
         if (!IdValido(id))

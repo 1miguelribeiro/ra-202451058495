@@ -1,6 +1,7 @@
 using LojaRetro.Api.Models;
 using LojaRetro.Api.Repositories;
 using LojaRetro.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
@@ -32,6 +33,7 @@ public class MovimentacoesController : ControllerBase
     /// <response code="200">Lista de movimentações (pode vir vazia).</response>
     /// <response code="400">Id do jogo em formato inválido.</response>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<Movimentacao>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<List<Movimentacao>>> Listar([FromQuery] string? jogoId)
@@ -54,6 +56,7 @@ public class MovimentacoesController : ControllerBase
     /// <response code="400">Id em formato inválido.</response>
     /// <response code="404">Movimentação não encontrada.</response>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(Movimentacao), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -80,10 +83,13 @@ public class MovimentacoesController : ControllerBase
     /// <response code="201">Movimentação registrada.</response>
     /// <response code="400">Quantidade inválida, id inválido ou estoque insuficiente.</response>
     /// <response code="404">Jogo não encontrado.</response>
+    /// <response code="401">Sem token ou token inválido.</response>
     [HttpPost]
+    [Authorize(Roles = Perfis.Admin + "," + Perfis.Funcionario)]
     [ProducesResponseType(typeof(Movimentacao), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<Movimentacao>> Registrar(MovimentacaoRequest request)
     {
         try
@@ -117,10 +123,15 @@ public class MovimentacoesController : ControllerBase
     /// <response code="200">Movimentação corrigida.</response>
     /// <response code="400">Id inválido, quantidade inválida ou estoque insuficiente.</response>
     /// <response code="404">Movimentação ou jogo não encontrado.</response>
+    /// <response code="401">Sem token ou token inválido.</response>
+    /// <response code="403">Perfil sem permissão (somente admin).</response>
     [HttpPut("{id}")]
+    [Authorize(Roles = Perfis.Admin)]
     [ProducesResponseType(typeof(Movimentacao), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<Movimentacao>> Atualizar(string id, AtualizarMovimentacaoRequest request)
     {
         try
@@ -150,10 +161,15 @@ public class MovimentacoesController : ControllerBase
     /// <response code="204">Movimentação removida.</response>
     /// <response code="400">Id inválido ou o estoque ficaria negativo.</response>
     /// <response code="404">Movimentação ou jogo não encontrado.</response>
+    /// <response code="401">Sem token ou token inválido.</response>
+    /// <response code="403">Perfil sem permissão (somente admin).</response>
     [HttpDelete("{id}")]
+    [Authorize(Roles = Perfis.Admin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Remover(string id)
     {
         try
