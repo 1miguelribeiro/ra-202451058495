@@ -95,6 +95,12 @@ var app = builder.Build();
 
 await CriarAdminAsync(app);
 
+app.UseExceptionHandler(erro => erro.Run(async context =>
+{
+    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+    await context.Response.WriteAsJsonAsync(new { mensagem = "Erro interno no servidor." });
+}));
+
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
