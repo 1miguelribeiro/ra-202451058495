@@ -13,3 +13,7 @@ Repositório de exercícios práticos da disciplina de Arquitetura de Aplicaçõ
 
 - `aulas/` — exercícios práticos realizados em aula
 - `trabalhos/` — trabalhos e entregas avaliativas
+
+## Trabalho semestral
+
+Loja Retrô — controle de estoque: [aaw/trabalhos/trabalho-01](aaw/trabalhos/trabalho-01/README.md)
