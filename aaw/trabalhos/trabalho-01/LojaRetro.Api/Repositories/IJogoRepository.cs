@@ -4,7 +4,7 @@ namespace LojaRetro.Api.Repositories;
 
 public interface IJogoRepository
 {
-    Task<List<Jogo>> ListarAsync();
+    Task<Pagina<Jogo>> ListarAsync(int pagina, int tamanho);
     Task<Jogo?> BuscarPorIdAsync(string id);
     Task CriarAsync(Jogo jogo);
     Task AtualizarAsync(Jogo jogo);

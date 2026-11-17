@@ -4,7 +4,7 @@ namespace LojaRetro.Api.Repositories;
 
 public interface IMovimentacaoRepository
 {
-    Task<List<Movimentacao>> ListarAsync();
+    Task<Pagina<Movimentacao>> ListarAsync(string? jogoId, int pagina, int tamanho);
     Task<List<Movimentacao>> ListarPorJogoAsync(string jogoId);
     Task<Movimentacao?> BuscarPorIdAsync(string id);
     Task CriarAsync(Movimentacao movimentacao);

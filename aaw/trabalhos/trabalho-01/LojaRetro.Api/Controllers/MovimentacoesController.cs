@@ -26,25 +26,30 @@ public class MovimentacoesController : ControllerBase
     }
 
     /// <summary>
-    /// Lista as movimentações, da mais recente para a mais antiga.
+    /// Lista as movimentações, da mais recente para a mais antiga, por página.
     /// </summary>
     /// <param name="jogoId">Opcional: mostra só as movimentações deste jogo.</param>
-    /// <returns>Lista de movimentações.</returns>
-    /// <response code="200">Lista de movimentações (pode vir vazia).</response>
-    /// <response code="400">Id do jogo em formato inválido.</response>
+    /// <param name="pagina">Número da página</param>
+    /// <param name="tamanho">Itens por página</param>
+    /// <returns>Uma página de movimentações.</returns>
+    /// <response code="200">Página de movimentações (pode vir vazia).</response>
+    /// <response code="400">Id do jogo, página ou tamanho inválido.</response>
     [HttpGet]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(List<Movimentacao>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Pagina<Movimentacao>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<List<Movimentacao>>> Listar([FromQuery] string? jogoId)
+    public async Task<ActionResult<Pagina<Movimentacao>>> Listar(
+        [FromQuery] string? jogoId,
+        [FromQuery] int pagina = 1,
+        [FromQuery] int tamanho = 10)
     {
-        if (jogoId is null)
-            return Ok(await _repositorio.ListarAsync());
-
-        if (!ObjectId.TryParse(jogoId, out _))
+        if (jogoId is not null && !ObjectId.TryParse(jogoId, out _))
             return BadRequest(new { mensagem = "Id do jogo inválido." });
 
-        return Ok(await _repositorio.ListarPorJogoAsync(jogoId));
+        if (pagina < 1 || tamanho < 1 || tamanho > 50)
+            return BadRequest(new { mensagem = "A página começa em 1 e o tamanho deve ser de 1 a 50." });
+
+        return Ok(await _repositorio.ListarAsync(jogoId, pagina, tamanho));
     }
 
     /// <summary>

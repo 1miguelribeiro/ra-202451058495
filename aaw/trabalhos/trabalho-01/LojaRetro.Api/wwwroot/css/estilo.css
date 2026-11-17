@@ -189,6 +189,19 @@ form input, form select {
     background: #e8f5e9;
 }
 
+.paginacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
 .escondido {
     display: none;
 }

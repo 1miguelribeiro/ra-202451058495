@@ -25,17 +25,23 @@ public class JogosController : ControllerBase
     }
 
     /// <summary>
-    /// Lista todos os jogos cadastrados.
+    /// Lista os jogos cadastrados, ordem alfabética e por página.
     /// </summary>
-    /// <returns>Lista de jogos.</returns>
-    /// <response code="200">Lista de jogos (pode vir vazia).</response>
+    /// <param name="pagina">Número da página</param>
+    /// <param name="tamanho">Itens por página</param>
+    /// <returns>Uma página de jogos.</returns>
+    /// <response code="200">Página de jogos (pode vir vazia).</response>
+    /// <response code="400">Página ou tamanho inválido.</response>
     [HttpGet]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(List<Jogo>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<Jogo>>> Listar()
+    [ProducesResponseType(typeof(Pagina<Jogo>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Pagina<Jogo>>> Listar([FromQuery] int pagina = 1, [FromQuery] int tamanho = 10)
     {
-        var jogos = await _repositorio.ListarAsync();
-        return Ok(jogos);
+        if (pagina < 1 || tamanho < 1 || tamanho > 50)
+            return BadRequest(new { mensagem = "A página começa em 1 e o tamanho deve ser de 1 a 50." });
+
+        return Ok(await _repositorio.ListarAsync(pagina, tamanho));
     }
 
     /// <summary>

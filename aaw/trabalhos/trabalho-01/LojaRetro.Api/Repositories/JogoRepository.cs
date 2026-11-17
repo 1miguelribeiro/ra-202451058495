@@ -12,9 +12,16 @@ public class JogoRepository : IJogoRepository
         _colecao = database.GetCollection<Jogo>("jogos");
     }
 
-    public async Task<List<Jogo>> ListarAsync()
+    public async Task<Pagina<Jogo>> ListarAsync(int pagina, int tamanho)
     {
-        return await _colecao.Find(_ => true).ToListAsync();
+        var total = await _colecao.CountDocumentsAsync(_ => true);
+        var itens = await _colecao.Find(_ => true)
+            .SortBy(j => j.Nome)
+            .Skip((pagina - 1) * tamanho)
+            .Limit(tamanho)
+            .ToListAsync();
+
+        return new Pagina<Jogo> { NumeroPagina = pagina, Tamanho = tamanho, Total = total, Itens = itens };
     }
 
     public async Task<Jogo?> BuscarPorIdAsync(string id)

@@ -12,9 +12,20 @@ public class MovimentacaoRepository : IMovimentacaoRepository
         _colecao = database.GetCollection<Movimentacao>("movimentacoes");
     }
 
-    public async Task<List<Movimentacao>> ListarAsync()
+    public async Task<Pagina<Movimentacao>> ListarAsync(string? jogoId, int pagina, int tamanho)
     {
-        return await _colecao.Find(_ => true).SortByDescending(m => m.Data).ToListAsync();
+        var filtro = jogoId is null
+            ? Builders<Movimentacao>.Filter.Empty
+            : Builders<Movimentacao>.Filter.Eq(m => m.JogoId, jogoId);
+
+        var total = await _colecao.CountDocumentsAsync(filtro);
+        var itens = await _colecao.Find(filtro)
+            .SortByDescending(m => m.Data)
+            .Skip((pagina - 1) * tamanho)
+            .Limit(tamanho)
+            .ToListAsync();
+
+        return new Pagina<Movimentacao> { NumeroPagina = pagina, Tamanho = tamanho, Total = total, Itens = itens };
     }
 
     public async Task<List<Movimentacao>> ListarPorJogoAsync(string jogoId)

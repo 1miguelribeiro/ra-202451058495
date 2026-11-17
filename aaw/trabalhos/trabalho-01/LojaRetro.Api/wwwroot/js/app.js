@@ -2,6 +2,7 @@ const conteudo = document.getElementById("conteudo");
 const caixaMensagem = document.getElementById("mensagem");
 const areaUsuario = document.getElementById("usuario");
 const botaoCadastrar = document.getElementById("botao-cadastrar");
+const itensPorPagina = 5;
 
 function lerSessao() {
     const sessao = JSON.parse(localStorage.getItem("sessao"));
@@ -96,6 +97,22 @@ function formatarPreco(valor) {
     return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+function botoesPagina(pagina, abrirPagina) {
+    if (pagina.totalDePaginas <= 1) {
+        return "";
+    }
+
+    const anterior = pagina.numeroPagina - 1;
+    const proxima = pagina.numeroPagina + 1;
+
+    return `
+        <div class="paginacao">
+            <button class="secundario" onclick="${abrirPagina(anterior)}" ${anterior < 1 ? "disabled" : ""}>Anterior</button>
+            <span>Página ${pagina.numeroPagina} de ${pagina.totalDePaginas}</span>
+            <button class="secundario" onclick="${abrirPagina(proxima)}" ${proxima > pagina.totalDePaginas ? "disabled" : ""}>Próxima</button>
+        </div>`;
+}
+
 function mostrarLogin() {
     limparMensagem();
 
@@ -185,13 +202,13 @@ async function sair() {
     await mostrarLista();
 }
 
-async function mostrarLista() {
+async function mostrarLista(numeroPagina = 1) {
     limparMensagem();
 
     try {
-        const jogos = await chamarApi("/jogos");
+        const pagina = await chamarApi("/jogos?pagina=" + numeroPagina + "&tamanho=" + itensPorPagina);
 
-        const linhas = jogos.map(jogo => `
+        const linhas = pagina.itens.map(jogo => `
             <tr>
                 <td>${escapar(jogo.nome)}</td>
                 <td>${escapar(jogo.console)}</td>
@@ -208,21 +225,22 @@ async function mostrarLista() {
                     <tr><th>Nome</th><th>Console</th><th>Ano</th><th>Preço</th><th>Estoque</th><th></th></tr>
                 </thead>
                 <tbody>${linhas || "<tr><td colspan='6'>Nenhum jogo cadastrado.</td></tr>"}</tbody>
-            </table>`;
+            </table>
+            ${botoesPagina(pagina, n => `mostrarLista(${n})`)}`;
     } catch (erro) {
         mostrarMensagem(erro.message, "erro");
     }
 }
 
-async function mostrarDetalhe(id) {
+async function mostrarDetalhe(id, numeroPagina = 1) {
     limparMensagem();
 
     try {
         const jogo = await chamarApi("/jogos/" + id);
-        const movimentacoes = await chamarApi("/movimentacoes?jogoId=" + id);
+        const historico = await chamarApi("/movimentacoes?jogoId=" + id + "&pagina=" + numeroPagina + "&tamanho=" + itensPorPagina);
         const admin = ehAdmin();
 
-        const linhas = movimentacoes.map(mov => `
+        const linhas = historico.itens.map(mov => `
             <tr>
                 <td>${new Date(mov.data).toLocaleString("pt-BR")}</td>
                 <td class="${mov.tipo === "Entrada" ? "entrada" : "saida"}">${mov.tipo}</td>
@@ -270,7 +288,8 @@ async function mostrarDetalhe(id) {
                     <tr><th>Data</th><th>Tipo</th><th>Qtd.</th><th>Motivo</th><th></th></tr>
                 </thead>
                 <tbody>${linhas || "<tr><td colspan='5'>Nenhuma movimentação.</td></tr>"}</tbody>
-            </table>`;
+            </table>
+            ${botoesPagina(historico, n => `mostrarDetalhe('${jogo.id}', ${n})`)}`;
     } catch (erro) {
         mostrarMensagem(erro.message, "erro");
     }
